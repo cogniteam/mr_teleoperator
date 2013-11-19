@@ -11,7 +11,7 @@ This collection includes:
     Rqt plugin  for selecting and controling a specific robot.
   </li>
    <li>
-   The node publishes a geometry_msgs/Twist message type.
+   A node that publishes a geometry_msgs/Twist message type.
    </li>
 </ul> 
 
