@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="images">
+    <file>wheel-icon.png</file>
+    <file>blue-folder-broken-icon.png</file>
+  </qresource>
+</RCC>

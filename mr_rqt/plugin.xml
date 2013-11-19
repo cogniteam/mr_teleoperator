@@ -1,0 +1,12 @@
+<library path="lib/libmr_rqt">
+  <class name="mr_rqt/MrRqt" type="mr_rqt::MrRqt" base_class_type="rqt_gui_cpp::Plugin">
+    <description>
+      An example Python GUI plugin to create a great user interface.
+    </description>
+    <qtgui>
+      <label>Multi-robot teleoperator</label>
+      <icon type="theme">image-x-generic</icon>
+      <statustip>Great user interface to provide real value.</statustip>
+    </qtgui>
+  </class>
+</library>
