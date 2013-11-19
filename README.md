@@ -17,7 +17,6 @@ This collection includes:
 
 
 <strong>Example:</strong>
-
-<code>
+```
 roslaunch mr_tools joystick_teleop.launch
-</code>
+```
