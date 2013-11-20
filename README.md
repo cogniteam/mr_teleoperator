@@ -3,7 +3,7 @@ mr_teleoperator
 
 <strong>Multi-robot teleoperation package collection</strong>
 
-A collection  of teleoperation modules utilizing a joystick (XboX, PS) to control multiple robots.
+A collection  of teleoperation modules utilizing a joystick (Xbox, PS) to control multiple robots.
 
 This collection includes: 
 <ul> 
