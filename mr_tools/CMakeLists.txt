@@ -37,5 +37,9 @@ target_link_libraries(mr_teleoperator
 #############
 
 install(TARGETS mr_teleoperator joystick_publisher
-   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+	RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(DIRECTORY launch/
+	DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
