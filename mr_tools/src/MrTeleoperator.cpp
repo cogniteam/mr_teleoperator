@@ -5,6 +5,10 @@
  *      Author: blackpc
  */
 
+/**
+ * DEPRECATED
+ */
+
 #include <iostream>
 #include <ros/ros.h>
 #include <sensor_msgs/Joy.h>
@@ -31,14 +35,14 @@ bool _enabled = false;
 void joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 {
 	geometry_msgs::Twist vel;
-	vel.angular.z = _aScale * joy->axes[0];
-	vel.linear.x = _lScale * joy->axes[1];
+	vel.angular.z = _aScale * joy->axes[3];
+	vel.linear.x = _lScale * joy->axes[4];
 	_deadmanPressed = joy->buttons[4];
 	_lastVelocityMessage = vel;
 }
 
 void publishVelocity(const ros::TimerEvent& event) {
-	if (_deadmanPressed && _enabled) {
+	if (_enabled) {
 		_publishers[_activeRobotNumber - 1].publish(_lastVelocityMessage);
 	}
 }
