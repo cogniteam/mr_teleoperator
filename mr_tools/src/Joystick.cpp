@@ -35,8 +35,8 @@
 #include <linux/joystick.h>
 #include <fcntl.h>
 #include <ros/ros.h>
-#include <diagnostic_updater/diagnostic_updater.h>
 #include <sensor_msgs/Joy.h>
+#include <geometry_msgs/Twist.h>
 
 
 ///\brief Opens, reads from and publishes joystick events
@@ -51,43 +51,29 @@ private:
   double coalesce_interval_; // Defaults to 100 Hz rate limit.
   int event_count_;
   int pub_count_;
-  ros::Publisher pub_;
   double lastDiagTime_;
 
-  diagnostic_updater::Updater diagnostic_;
+  double a_scale_;
+  double l_scale_;
+  ros::Publisher velocity_publisher_;
+  ros::Timer velocity_publish_timer_;
+  sensor_msgs::Joy current_joy_message_;
 
-  ///\brief Publishes diagnostics and status
-  void diagnostics(diagnostic_updater::DiagnosticStatusWrapper& stat)
-  {
-    double now = ros::Time::now().toSec();
-    double interval = now - lastDiagTime_;
-    if (open_)
-      stat.summary(0, "OK");
-    else
-      stat.summary(2, "Joystick not open.");
-
-    stat.add("topic", pub_.getTopic());
-    stat.add("device", joy_dev_);
-    stat.add("dead zone", deadzone_);
-    stat.add("autorepeat rate (Hz)", autorepeat_rate_);
-    stat.add("coalesce interval (s)", coalesce_interval_);
-    stat.add("recent joystick event rate (Hz)", event_count_ / interval);
-    stat.add("recent publication rate (Hz)", pub_count_ / interval);
-    stat.add("subscribers", pub_.getNumSubscribers());
-    event_count_ = 0;
-    pub_count_ = 0;
-    lastDiagTime_ = now;
+  void publish_velocity(ros::TimerEvent event) {
+	  geometry_msgs::Twist vel;
+	  vel.angular.z = a_scale_ * current_joy_message_.axes[3];
+	  vel.linear.x = l_scale_ * current_joy_message_.axes[4];
+	  velocity_publisher_.publish(vel);
   }
 
 public:
-  Joystick() : nh_(), diagnostic_()
-  {}
+  Joystick() : nh_() {}
 
   ///\brief Opens joystick port, reads from port and publishes while node is active
   int main(int argc, char **argv)
   {
-    diagnostic_.add("Joystick Driver Status", this, &Joystick::diagnostics);
-    diagnostic_.setHardwareID("none");
+//    diagnostic_.add("Joystick Driver Status", this, &Joystick::diagnostics);
+//    diagnostic_.setHardwareID("none");
 
     // Parameters
     ros::NodeHandle nh_param("~");
@@ -95,12 +81,17 @@ public:
     std::string pub_topic;
     nh_param.param<std::string>("topic", pub_topic, "joy");
 
-    pub_ = nh_.advertise<sensor_msgs::Joy>(pub_topic, 1);
+    // pub_ = nh_.advertise<sensor_msgs::Joy>(pub_topic, 1);
+    velocity_publisher_ = nh_.advertise<geometry_msgs::Twist>("/joy_cmd_vel", 100, false);
+    velocity_publish_timer_ = nh_.createTimer(ros::Duration(0.1), boost::bind(&Joystick::publish_velocity, this, _1));
 
     nh_param.param<std::string>("dev", joy_dev_, "/dev/input/js0");
     nh_param.param<double>("deadzone", deadzone_, 0.05);
     nh_param.param<double>("autorepeat_rate", autorepeat_rate_, 0);
     nh_param.param<double>("coalesce_interval", coalesce_interval_, 0.001);
+
+    nh_param.param("scale_angular", a_scale_, 0.9);
+    nh_param.param("scale_linear" , l_scale_, 2.0);
 
     // Checks on parameters
     if (autorepeat_rate_ > 1 / coalesce_interval_)
@@ -153,7 +144,7 @@ public:
     while (nh_.ok())
     {
       open_ = false;
-      diagnostic_.force_update();
+//      diagnostic_.force_update();
       bool first_fault = true;
       while (true)
       {
@@ -180,12 +171,12 @@ public:
           first_fault = false;
         }
         sleep(1.0);
-        diagnostic_.update();
+//        diagnostic_.update();
       }
 
       ROS_INFO("Opened joystick: %s. deadzone_: %f.", joy_dev_.c_str(), deadzone_);
       open_ = true;
-      diagnostic_.force_update();
+//      diagnostic_.force_update();
 
       bool tv_set = false;
       bool publication_pending = false;
@@ -278,7 +269,9 @@ public:
           // This should be the case as the kernel sends them along as soon as
           // the device opens.
           //ROS_INFO("Publish...");
-          pub_.publish(joy_msg);
+
+          // pub_.publish(joy_msg);
+        	current_joy_message_ = joy_msg;
           publish_now = false;
           tv_set = false;
           publication_pending = false;
@@ -312,7 +305,7 @@ public:
           tv.tv_usec = 0;
         }
 
-        diagnostic_.update();
+//        diagnostic_.update();
       } // End of joystick open loop.
 
       close(joy_fd);
