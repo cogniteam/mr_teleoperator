@@ -30,7 +30,7 @@ target_link_libraries(joystick_teleoperator ${catkin_LIBRARIES})
 ## Install ##
 #############
 
-install(TARGETS velocity_dispatcher joystick_publisher
+install(TARGETS velocity_dispatcher joystick_teleoperator
 	RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
