@@ -21,18 +21,18 @@ include_directories(
 )
 
 add_executable(velocity_dispatcher src/VelocityDispatcher.cpp)
-add_executable(mr_teleoperator src/MrTeleoperator.cpp)
+#add_executable(mr_teleoperator src/MrTeleoperator.cpp)
 add_executable(joystick_publisher src/Joystick.cpp)
 
 target_link_libraries(velocity_dispatcher ${catkin_LIBRARIES})
 target_link_libraries(joystick_publisher ${catkin_LIBRARIES})
-target_link_libraries(mr_teleoperator ${catkin_LIBRARIES})
+#target_link_libraries(mr_teleoperator ${catkin_LIBRARIES})
 
 #############
 ## Install ##
 #############
 
-install(TARGETS mr_teleoperator joystick_publisher
+install(TARGETS velocity_dispatcher joystick_publisher
 	RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

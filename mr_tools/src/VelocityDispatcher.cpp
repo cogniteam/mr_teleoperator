@@ -27,7 +27,9 @@
  */
 
 #include <iostream>
+#include <boost/thread.hpp>
 #include <boost/foreach.hpp>
+
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/Int32.h>
@@ -41,6 +43,8 @@ using namespace ros;
 *** Parameters
 **************************************************************************************************/
 
+volatile bool _enableOutput;
+
 int _currentInput;
 int _currentOutput;
 
@@ -53,7 +57,7 @@ Subscriber _setOutputSubscriber;
 Publisher _currentInputPublisher;
 Publisher _currentOutputPublisher;
 
-Timer _velocityPublishTimer;
+boost::thread* _velocityPublishThread;
 Timer _statusPublishTimer;
 
 geometry_msgs::Twist _currentVelocity;
@@ -64,15 +68,21 @@ geometry_msgs::Twist _currentVelocity;
 
 void onSetInputMessage(const std_msgs::Int32::ConstPtr inputIdMessage) {
 	if (inputIdMessage->data >= 1 && inputIdMessage->data <= _inputs.size()) {
-		_currentOutput = inputIdMessage->data - 1;
-		ROS_INFO("Current input changed to '#%i' ['%s']", inputIdMessage->data, _inputs[_currentOutput].getTopic().c_str());
+		_currentInput = inputIdMessage->data - 1;
+		ROS_INFO("Current input changed to '#%i' ['%s']", inputIdMessage->data, _inputs[_currentInput].getTopic().c_str());
 	}
 }
 
 void onSetOutputMessage(const std_msgs::Int32::ConstPtr outputIdMessage) {
 	if (outputIdMessage->data >= 1 && outputIdMessage->data <= _outputs.size()) {
 		_currentOutput = outputIdMessage->data - 1;
+		_enableOutput = true;
 		ROS_INFO("Current output changed to '#%i' ['%s']", outputIdMessage->data, _outputs[_currentOutput].getTopic().c_str());
+	}
+
+	if (outputIdMessage->data == 0) {
+		_enableOutput = false;
+		ROS_INFO("Current output changed to NONE [Disabled]");
 	}
 }
 
@@ -95,8 +105,14 @@ void publishStatus(TimerEvent timerEvent) {
 	_currentOutputPublisher.publish(intMessage);
 }
 
-void publishVelocity(TimerEvent timerEvent) {
-	_outputs[_currentOutput].publish(_currentVelocity);
+void publishVelocity() {
+	while (ros::ok()) {
+
+		if (_enableOutput)
+			_outputs[_currentOutput].publish(_currentVelocity);
+
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1000.0 / 20.0));
+	}
 }
 
 void createSubscribersAndPublishers(NodeHandle& node, map<string, string>& inputs, vector<string>& outputs) {
@@ -121,7 +137,7 @@ void createSubscribersAndPublishers(NodeHandle& node, map<string, string>& input
 	foreach (string output, outputs) {
 		ROS_INFO(" - Setting up output topic #%i: %s", outputId++, output.c_str());
 
-		_outputs.push_back(node.advertise<geometry_msgs::Twist>(output, 100, false));
+		_outputs.push_back(node.advertise<geometry_msgs::Twist>(output, 1, false));
 	}
 
 	/**
@@ -137,10 +153,10 @@ void createSubscribersAndPublishers(NodeHandle& node, map<string, string>& input
 	_currentOutputPublisher = node.advertise<std_msgs::Int32>("/velocity_dispatcher/current_output", 1, true);
 
 	/**
-	 * Timers
+	 * Publishing threads & timers
 	 */
-	_velocityPublishTimer = node.createTimer(Duration(0.1), boost::bind(publishVelocity, _1));
 	_statusPublishTimer = node.createTimer(Duration(1), boost::bind(publishStatus, _1));
+	_velocityPublishThread = new boost::thread(publishVelocity);
 }
 
 bool setupInputOutput(NodeHandle& node) {
@@ -162,6 +178,7 @@ bool setupInputOutput(NodeHandle& node) {
 		return false;
 	}
 
+	_enableOutput   = true;
 	_currentInput 	= 0;
 	_currentOutput 	= 0;
 
