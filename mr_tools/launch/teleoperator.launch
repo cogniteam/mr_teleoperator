@@ -17,7 +17,7 @@
         - /pioneer_10/cmd_vel
     </rosparam>
     
-    <node name="joystick_publisher" pkg="mr_tools" type="joystick_publisher" />
+    <node name="joystick_teleoperator" pkg="mr_tools" type="joystick_teleoperator" />
     <node name="mr_teleoperator" pkg="mr_tools" type="velocity_dispatcher" output="screen" />
     <node name="rqt" pkg="rqt_gui" type="rqt_gui" output="screen" />
 </launch>
