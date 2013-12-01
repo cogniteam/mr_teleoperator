@@ -30,6 +30,8 @@ set(rqt_image_view_SRCS
 
 set(rqt_image_view_HDRS
     include/mr_rqt/MrRqt.h
+    include/mr_rqt/VelocityWidget.h
+    include/mr_rqt/KeyboardTeleop.h
 )
 
 set(rqt_image_view_UIS
