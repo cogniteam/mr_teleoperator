@@ -18,5 +18,5 @@ This collection includes:
 
 <strong>Example:</strong>
 ```
-roslaunch mr_tools joystick_teleop.launch
+roslaunch mr_tools teleoperator.launch
 ```
