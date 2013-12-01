@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <package>
   <name>mr_tools</name>
-  <version>0.0.0</version>
-  <description>The mr_tools package</description>
-
+  <version>0.2.0</version>
+  <description>Some useful nodes for multi-robot teleoperation</description>
+  <url>http://www.ros.org/wiki/mr_tools</url>
   <maintainer email="igor@cogniteam.com">Igor Makhtes</maintainer>
+  <author email="igor@cogniteam.com">Igor Makhtes</author>
   <license>MIT</license>
 
   <buildtool_depend>catkin</buildtool_depend>
@@ -20,6 +21,5 @@
   <run_depend>std_msgs</run_depend>
   <run_depend>sensor_msgs</run_depend>
   <run_depend>tf</run_depend>
-  <export>
-  </export>
+
 </package>
