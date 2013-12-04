@@ -3,10 +3,3 @@ project(mr_teleoperator)
 find_package(catkin REQUIRED)
 catkin_metapackage()
 
-
-
-
-
-
-
-
