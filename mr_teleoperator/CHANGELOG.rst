@@ -2,8 +2,8 @@
 Changelog for package mr_teleoperator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.3 (2013-12-04)
+------------------
 * Update CMakeLists.txt
 * Contributors: Igor M.
 
