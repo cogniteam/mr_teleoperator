@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>mr_tools</name>
-  <version>0.2.1</version>
+  <version>0.2.2</version>
   <description>Some useful nodes for multi-robot teleoperation</description>
   <url>http://www.ros.org/wiki/mr_tools</url>
   <maintainer email="igor@cogniteam.com">Igor Makhtes</maintainer>
