@@ -11,7 +11,7 @@ namespace mr_rqt
 {
 
 MrRqt::MrRqt()
-	: _widget(NULL), _velocityWidget(NULL), _spinThread(boost::bind(&MrRqt::spin, this))
+	: _outputReady(false), _widget(NULL), _velocityWidget(NULL), _spinThread(boost::bind(&MrRqt::spin, this))
 {
 	_setInputPublisher		= _node.advertise<std_msgs::Int32>("/velocity_dispatcher/set_input", 1, false);
 	_setOutputPublisher 	= _node.advertise<std_msgs::Int32>("/velocity_dispatcher/set_output", 1, false);
@@ -66,6 +66,8 @@ void MrRqt::refreshInputOutput(map<string, string>& inputs, vector<string> outpu
 
 	if (robotId > 1)
 		_mrmControllerUi.controllableRobots->setCurrentIndex(1);
+
+	_outputReady = true;
 }
 
 bool MrRqt::setupInputOuput(ros::NodeHandle& node)
@@ -157,7 +159,8 @@ void MrRqt::publishMouseVelocity(double linearPercent, double angularPercent)
 	message.linear.x = (linearPercent / 100.0) * 3;
 	message.angular.z = (angularPercent / 100.0) * 3;
 
-	_mouseVelocityPublisher.publish(message);
+	if (_outputReady)
+		_mouseVelocityPublisher.publish(message);
 }
 
 void MrRqt::publishKeyboardVelocity(double linear, double angular)
@@ -167,7 +170,8 @@ void MrRqt::publishKeyboardVelocity(double linear, double angular)
 	message.linear.x = linear;
 	message.angular.z = angular;
 
-	_keyboardVelocityPublisher.publish(message);
+	if (_outputReady)
+		_keyboardVelocityPublisher.publish(message);
 }
 
 void MrRqt::onVelocityMessage(const geometry_msgs::Twist::Ptr velocity)
@@ -189,6 +193,9 @@ void MrRqt::spin()
 
 void MrRqt::selectInputClicked()
 {
+	if (!_outputReady)
+		return;
+
 	string inputMethod = _mrmControllerUi.inputMethods->currentText().toStdString();
 
 
@@ -217,6 +224,9 @@ void MrRqt::selectInputClicked()
 
 void MrRqt::selectOutputClicked()
 {
+	if (!_outputReady)
+		return;
+
 	std_msgs::Int32 selectedOutput;
 	selectedOutput.data = _mrmControllerUi.controllableRobots->currentIndex();
 	_setOutputPublisher.publish(selectedOutput);

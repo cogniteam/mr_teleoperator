@@ -79,6 +79,8 @@ public slots:
 	void selectInputClicked();
 
 private:
+	bool _outputReady;
+
 	boost::thread _spinThread;
 	QWidget* _widget;
 	VelocityWidget* _velocityWidget;
