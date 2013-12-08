@@ -25,7 +25,7 @@ find_package(Qt4 COMPONENTS QtCore QtGui REQUIRED)
 include(${QT_USE_FILE})
 
 set(rqt_image_view_SRCS
-    src/MrRqt.cpp
+    src/mr_rqt/MrRqt.cpp
 )
 
 set(rqt_image_view_HDRS
