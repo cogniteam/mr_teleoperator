@@ -2,6 +2,11 @@
 Changelog for package mr_rqt
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* cpp files moved to src/mr_rqt
+* Contributors: Igor Makhtes
+
 0.2.3 (2013-12-04)
 ------------------
 
