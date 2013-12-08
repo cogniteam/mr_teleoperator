@@ -2,8 +2,8 @@
 Changelog for package mr_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.5 (2013-12-08)
+------------------
 * Changelogs removed
 * Changelog recreated
 * Changelogs removed
