@@ -37,6 +37,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Joy.h>
 #include <geometry_msgs/Twist.h>
+#include <boost/thread.hpp>
 
 
 ///\brief Opens, reads from and publishes joystick events
@@ -59,12 +60,27 @@ private:
   ros::Timer velocity_publish_timer_;
   sensor_msgs::Joy current_joy_message_;
 
-  void publish_velocity(ros::TimerEvent event) {
-	  geometry_msgs::Twist vel;
-	  vel.angular.z = a_scale_ * current_joy_message_.axes[3];
-	  vel.linear.x = l_scale_ * current_joy_message_.axes[4];
-	  velocity_publisher_.publish(vel);
+  void publish_velocity() {
+    ROS_INFO("Publishing...");
+
+    while (ros::ok()) {
+      geometry_msgs::Twist vel;
+      vel.angular.z = a_scale_ * current_joy_message_.axes[3];
+      vel.linear.x = l_scale_ * current_joy_message_.axes[4];
+      velocity_publisher_.publish(vel);
+
+      boost::this_thread::sleep(boost::posix_time::milliseconds(1000.0 / 30.0));
+    }
+
   }
+
+  // void publish_velocity(const ros::TimerEvent& event) {
+  //   ROS_INFO("Publishing...");
+	 //  geometry_msgs::Twist vel;
+	 //  vel.angular.z = a_scale_ * current_joy_message_.axes[3];
+	 //  vel.linear.x = l_scale_ * current_joy_message_.axes[4];
+	 //  velocity_publisher_.publish(vel);
+  // }
 
 public:
   Joystick() : nh_() {}
@@ -78,12 +94,20 @@ public:
     // Parameters
     ros::NodeHandle nh_param("~");
 
+    current_joy_message_.axes.push_back(0);
+    current_joy_message_.axes.push_back(0);
+    current_joy_message_.axes.push_back(0);
+    current_joy_message_.axes.push_back(0);
+    current_joy_message_.axes.push_back(0);
+
     std::string pub_topic;
     nh_param.param<std::string>("topic", pub_topic, "joy");
 
+    ROS_INFO("Starting joystick publisher...");
+
     // pub_ = nh_.advertise<sensor_msgs::Joy>(pub_topic, 1);
     velocity_publisher_ = nh_.advertise<geometry_msgs::Twist>("/joy_cmd_vel", 100, false);
-    velocity_publish_timer_ = nh_.createTimer(ros::Duration(0.1), boost::bind(&Joystick::publish_velocity, this, _1));
+    // velocity_publish_timer_ = nh_.createTimer(ros::Duration(0.1), boost::bind(&Joystick::publish_velocity, this, _1));
 
     nh_param.param<std::string>("dev", joy_dev_, "/dev/input/js0");
     nh_param.param<double>("deadzone", deadzone_, 0.05);
@@ -139,6 +163,9 @@ public:
     event_count_ = 0;
     pub_count_ = 0;
     lastDiagTime_ = ros::Time::now().toSec();
+
+
+    boost::thread th(boost::bind(&Joystick::publish_velocity, this));
 
     // Big while loop opens, publishes
     while (nh_.ok())

@@ -1,9 +1,5 @@
 <launch>
     <rosparam ns="mr_teleoperator">
-      input_topics:
-        Joystick: /joy_cmd_vel
-        Keyboard: /keyboard_cmd_vel
-        Mouse:    /mouse_cmd_vel
       output_topics:
         - /pioneer_1/cmd_vel
         - /pioneer_2/cmd_vel
@@ -17,9 +13,9 @@
         - /pioneer_10/cmd_vel
     </rosparam>
     
-    <node name="joystick_teleoperator" pkg="mr_tools" type="joystick_teleoperator">
+    <node name="joystick_teleoperator" pkg="mr_tools" type="joystick_teleoperator" output="screen">
         <param name="dev" value="/dev/input/js0" />
     </node>
-    <node name="mr_teleoperator" pkg="mr_tools" type="velocity_dispatcher" output="screen" />
+
     <node name="rqt" pkg="rqt_gui" type="rqt_gui" output="screen" />
 </launch>
