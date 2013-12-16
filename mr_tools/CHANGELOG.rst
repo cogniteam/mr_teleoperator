@@ -2,17 +2,39 @@
 Changelog for package mr_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.2.3 (2013-12-04)
+0.2.5 (2013-12-08)
 ------------------
+* Changelogs removed
+* Changelog recreated
+* Changelogs removed
+* Contributors: Igor Makhtes
 
-0.2.2 (2013-12-04)
+0.2.4 (2013-12-08)
 ------------------
+* "0.2.4"
+* Changelogs update
+* Contributors: Igor Makhtes
 
-0.2.1 (2013-12-04)
-------------------
+0.2.3 (2013-12-04 15:52)
+------------------------
+* "0.2.3"
+* Changelogs updated
+* Contributors: Igor Makhtes
 
-0.2.0 (2013-12-04)
-------------------
+0.2.2 (2013-12-04 15:46)
+------------------------
+* "0.2.2"
+* Changelogs updated
+* Contributors: Igor Makhtes
+
+0.2.1 (2013-12-04 14:41)
+------------------------
+* "0.2.1"
+* Changelogs created
+* Contributors: cogni
+
+0.2.0 (2013-12-04 14:21)
+------------------------
 * Update teleoperator.launch
 * install fixed
 * 'joystick_publisher' node changed to 'joystick_teleoperator'
