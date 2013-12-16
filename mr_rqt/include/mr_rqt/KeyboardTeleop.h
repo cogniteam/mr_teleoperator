@@ -43,12 +43,14 @@ using namespace std;
 
 typedef boost::function<void (double, double)> VelocityCallback;
 
-class KeyboardTeleop : public QObject {
+namespace mr_rqt {
+
+class KeyboardTeleop : public QWidget {
 Q_OBJECT
 
 public:
 
-	KeyboardTeleop()
+	explicit KeyboardTeleop()
 		: _updateThread(boost::bind(&KeyboardTeleop::updateThread, this))
 	{
 		_linear = 0;
@@ -168,6 +170,6 @@ private:
 
 };
 
-
+}
 
 #endif /* KEYBOARDTELEOP_H_ */

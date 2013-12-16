@@ -45,10 +45,12 @@
 #include <QListView>
 #include <QPainter>
 #include <QStandardItemModel>
+#include <QDockWidget>
 
 #include <rqt_gui_cpp/plugin.h>
 #include <pluginlib/class_list_macros.h>
 
+#include <mr_rqt/TeleoperatorInstanceWidget.h>
 #include <mr_rqt/MrmControllerUi.h>
 #include <mr_rqt/VelocityWidget.h>
 #include <mr_rqt/KeyboardTeleop.h>
@@ -75,8 +77,10 @@ public:
 
 public slots:
 
-	void selectOutputClicked();
-	void selectInputClicked();
+//	void selectOutputClicked();
+//	void selectInputClicked();
+
+	void addControllerClicked();
 
 private:
 	bool _outputReady;
@@ -103,15 +107,15 @@ private:
 	int _currentOutput;
 
 	void wireUpEvents();
-	void refreshInputOutput(map<string, string>& inputs, vector<string> outputs);
+//	void refreshInputOutput(map<string, string>& inputs, vector<string> outputs);
 	bool setupInputOuput(ros::NodeHandle& node);
-	void refreshConfiguration();
+//	void refreshConfiguration();
 	void spin();
 
-	void publishMouseVelocity(double, double);
-	void publishKeyboardVelocity(double, double);
+//	void publishMouseVelocity(double, double);
+//	void publishKeyboardVelocity(double, double);
 
-	void onVelocityMessage(const geometry_msgs::Twist::Ptr velocity);
+//	void onVelocityMessage(const geometry_msgs::Twist::Ptr velocity);
 
 };
 

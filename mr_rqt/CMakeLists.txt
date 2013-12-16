@@ -32,10 +32,12 @@ set(rqt_image_view_HDRS
     include/mr_rqt/MrRqt.h
     include/mr_rqt/VelocityWidget.h
     include/mr_rqt/KeyboardTeleop.h
+    include/mr_rqt/TeleoperatorInstanceWidget.h
 )
 
 set(rqt_image_view_UIS
     ui/MrmControllerUi.ui
+    ui/TeleoperatorInstance.ui
 )
 
 set(rqt_image_view_INCLUDE_DIRECTORIES

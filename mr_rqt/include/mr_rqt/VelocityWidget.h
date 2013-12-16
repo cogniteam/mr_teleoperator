@@ -62,9 +62,19 @@ public:
 		  _visibleLinear(0),
 		  _visibleAngular(0),
 		  _mouseEnabled(false),
+		  _feedbackEnabled(true),
+		  _mouseDown(false),
+		  _zeroVelocityCounter(0),
+		  _inputTicks(0),
 		  _updateThread(boost::bind(&VelocityWidget::updateThread, this))
 	{
 
+		connect(this, SIGNAL(redrawSignal()), this, SLOT(redraw()), Qt::QueuedConnection);
+	}
+
+	~VelocityWidget() {
+		_updateThread.interrupt();
+		_updateThread.join();
 	}
 
 	void resetLimits() {
@@ -74,7 +84,7 @@ public:
 
 	void setLinear(double linear) {
 
-		if (_mouseEnabled)
+		if (_mouseEnabled && !_feedbackEnabled)
 			return;
 
 		if (linear > _maxLinear)
@@ -93,7 +103,7 @@ public:
 
 	void setAngular(double angular) {
 
-		if (_mouseEnabled)
+		if (_mouseEnabled && !_feedbackEnabled)
 			return;
 
 		if (angular > _maxAngular)
@@ -112,11 +122,13 @@ public:
 
 	void setVelocity(double linear, double angular) {
 
-		if (_mouseEnabled)
+		if (!_feedbackEnabled)
 			return;
 
 		setLinear(linear);
 		setAngular(angular);
+
+//		cout << "Setting l/a: " << _linearPercent << ", " << _angularPercent << endl;
 	}
 
 	void setCallback(VelocityCallback callback) {
@@ -131,37 +143,64 @@ public:
 		_mouseEnabled = false;
 	}
 
+public slots:
+
+	void redraw() {
+		update();
+	}
+
+signals:
+
+	void redrawSignal();
+
 private:
 
-	double _linear;
-	double _angular;
+	volatile double _linear;
+	volatile double _angular;
 
-	double _maxLinear;
-	double _minLinear;
-	double _maxAngular;
-	double _minAngular;
+	volatile double _maxLinear;
+	volatile double _minLinear;
+	volatile double _maxAngular;
+	volatile double _minAngular;
 
-	double _linearPercent;
-	double _angularPercent;
+	volatile double _linearPercent;
+	volatile double _angularPercent;
 
-	double _visibleLinear;
-	double _visibleAngular;
+	volatile double _visibleLinear;
+	volatile double _visibleAngular;
 
 	bool _mouseEnabled;
+	bool _feedbackEnabled;
+	bool _mouseDown;
+	int _zeroVelocityCounter;
+	volatile long _inputTicks;
 
-	ros::Timer _updateTimer;
 	VelocityCallback _callback;
 
 	boost::thread _updateThread;
 
 	void updateThread() {
 
-		while(ros::ok()) {
+		while(ros::ok() && !_updateThread.interruption_requested()) {
+
+//			cout << _linearPercent << ", " << _angularPercent << endl;
 
 			_visibleLinear += (_linearPercent - _visibleLinear)/ 2.0;
 			_visibleAngular += (_angularPercent - _visibleAngular) / 2.0;
 
-			update();
+
+			if (fabs(_visibleLinear) < 0.0001)
+				_visibleLinear = 0;
+
+			if (fabs(_visibleAngular) < 0.0001)
+				_visibleAngular = 0;
+
+			emit redrawSignal();
+
+			if (!_mouseDown &&_inputTicks++ > 60)
+				_feedbackEnabled = true;
+			else
+				_feedbackEnabled = false;
 
 			boost::this_thread::sleep(boost::posix_time::milliseconds(1000.0 / 60.0));
 		}
@@ -294,6 +333,9 @@ private:
 	}
 
 	void mousePressEvent(QMouseEvent* e) {
+		_mouseDown = true;
+		_inputTicks = 0;
+
 		if (!_mouseEnabled)
 			return;
 
@@ -301,6 +343,9 @@ private:
 	}
 
 	void mouseMoveEvent(QMouseEvent* e) {
+
+		_inputTicks = 0;
+
 		if (!_mouseEnabled)
 			return;
 
@@ -312,6 +357,10 @@ private:
 	}
 
 	void mouseReleaseEvent(QMouseEvent* e) {
+
+		_mouseDown = false;
+		_inputTicks = 0;
+
 		if (!_mouseEnabled)
 			return;
 
@@ -323,7 +372,7 @@ private:
 	}
 
 	void keyPressEvent(QKeyEvent* e) {
-		cout << "Key pressed = " << e->key() << endl;
+//		cout << "Key pressed = " << e->key() << endl;
 	}
 };
 
