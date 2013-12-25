@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>mr_teleoperator</name>
-  <version>0.2.5</version>
+  <version>0.2.6</version>
   <description>Multi-robot teleoperation package collection</description>
   <url>http://www.ros.org/wiki/mr_teleoperator</url>
   <maintainer email="igor@cogniteam.com">Igor Makhtes</maintainer>

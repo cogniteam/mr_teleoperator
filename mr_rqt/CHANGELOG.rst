@@ -2,8 +2,8 @@
 Changelog for package mr_rqt
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.6 (2013-12-25)
+------------------
 * dockable teleop widgets
 * Contributors: Igor Makhtes
 
