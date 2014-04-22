@@ -32,10 +32,12 @@
 #include <iostream>
 #include <set>
 
-#include <boost/foreach.hpp>
-#include <boost/date_time.hpp>
-#include <boost/thread.hpp>
-#include <boost/algorithm/string.hpp>
+#ifndef Q_MOC_RUN  // See: https://bugreports.qt-project.org/browse/QTBUG-22829
+# include <boost/foreach.hpp>
+# include <boost/date_time.hpp>
+# include <boost/thread.hpp>
+# include <boost/algorithm/string.hpp>
+#endif
 
 #include <ros/ros.h>
 #include <std_msgs/String.h>
